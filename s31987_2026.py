@@ -45,10 +45,14 @@ def complementary_sequence(sequence: str) -> str:
 
     return comp_sequence
 
+#reverse complementary sequence
 def reverse_complementary_sequence(sequence: str) -> str:
     comp_sequence = complementary_sequence(sequence)
     reverse_comp_sequence = comp_sequence[::-1]
     return reverse_comp_sequence
+
+def transcribe_dna(sequence: str) -> str:
+    return sequence.replace("T", "U")
 
 #add records to existing FASTA file
 def append_to_fasta(sequence_id: str, fasta_record: str) -> None:
@@ -57,6 +61,31 @@ def append_to_fasta(sequence_id: str, fasta_record: str) -> None:
     with open(filename, "a") as fasta_file:
         fasta_file.write("\n")
         fasta_file.write(fasta_record)
+
+#counting gc_content in sliding_window
+# Returns a list of tuples:
+# (start_position, gc_content)
+def sliding_window(sequence: str, window_size: int) -> list:
+    results = []
+    for i in range(0, len(sequence) - window_size + 1):
+        window = sequence[i:i + window_size]
+        gc_count = window.count("G") + window.count("C")
+        gc_content = (gc_count / window_size) * 100
+
+        results.append((i+1, gc_content))
+    return results
+
+#saving sliding_window result to cvs file
+def save_gc_to_csv(sequence_id: str, gc_result: list) -> None:
+    filename = f"{sequence_id}_gc_content.csv"
+
+    with open(filename, "w") as csv_file:
+        csv_file.write("start_position,gc_content\n")
+
+        for position, gc_content in gc_result:
+            csv_file.write(f"{position},{gc_content:.2f}\n")
+
+    print(f"GC content saved to {filename}")
 
 def validate_positive_int(prompt: str, min_val: int = 1, max_val: int = 100000) -> int:
     while True:
@@ -216,6 +245,16 @@ def main():
     reverse_comp_sequence = reverse_complementary_sequence(dna_sequence)
     reverse_comp_record = format_fasta(sequence_id + "_reverse", "reverse complementary strand", reverse_comp_sequence)
     append_to_fasta(sequence_id, reverse_comp_record)
+
+    #transcibe dna
+    mrna = transcribe_dna(dna_sequence)
+    mrna_record = format_fasta(sequence_id + "_mrna", "transcribed mRNA strand", mrna)
+    append_to_fasta(sequence_id, mrna_record)
+
+    #window sliding
+    windowe_size = validate_positive_int("Enter sliding window size: ", min_val=1, max_val=sequence_length)
+    gc_result = sliding_window(dna_sequence, windowe_size)
+    save_gc_to_csv(sequence_id, gc_result)
 
 if __name__ == "__main__":
     main()
