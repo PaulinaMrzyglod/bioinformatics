@@ -28,6 +28,35 @@ def print_motif_positions(positions: list, motif: str) -> None:
     else:
         print(f"Motif {motif} was not found")
 
+#complementary sequence
+def complementary_sequence(sequence: str) -> str:
+
+    complementary_map = {
+        "A": "T",
+        "T": "A",
+        "G": "C",
+        "C": "G",
+    }
+
+    comp_sequence = ""
+
+    for nucleotide in sequence:
+        comp_sequence += complementary_map[nucleotide]
+
+    return comp_sequence
+
+def reverse_complementary_sequence(sequence: str) -> str:
+    comp_sequence = complementary_sequence(sequence)
+    reverse_comp_sequence = comp_sequence[::-1]
+    return reverse_comp_sequence
+
+#add records to existing FASTA file
+def append_to_fasta(sequence_id: str, fasta_record: str) -> None:
+    filename = f"{sequence_id}.fasta"
+
+    with open(filename, "a") as fasta_file:
+        fasta_file.write("\n")
+        fasta_file.write(fasta_record)
 
 def validate_positive_int(prompt: str, min_val: int = 1, max_val: int = 100000) -> int:
     while True:
@@ -177,6 +206,16 @@ def main():
     motif = input("Enter the motif sequence: ").strip().upper()
     motif_positions = find_motif(dna_sequence, motif)
     print_motif_positions(motif_positions, motif)
+
+    #complemenatry sequence
+    comp_sequence = complementary_sequence(dna_sequence)
+    comp_record = format_fasta(sequence_id + "_complement", "complementary strand", comp_sequence)
+    append_to_fasta(sequence_id, comp_record)
+
+    #reverse complementary sequence
+    reverse_comp_sequence = reverse_complementary_sequence(dna_sequence)
+    reverse_comp_record = format_fasta(sequence_id + "_reverse", "reverse complementary strand", reverse_comp_sequence)
+    append_to_fasta(sequence_id, reverse_comp_record)
 
 if __name__ == "__main__":
     main()
