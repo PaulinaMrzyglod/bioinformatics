@@ -71,13 +71,59 @@ def generate_dna_sequence(length):
 
     return sequence
 
+def calculate_statistics(sequence):
+    length = len(sequence)
+
+    count_a = sequence.count('A')
+    count_g = sequence.count('G')
+    count_c = sequence.count('C')
+    count_t = sequence.count('T')
+
+    stats = {
+        "A": count_a / length * 100,
+        "G": count_g / length * 100,
+        "C": count_c / length * 100,
+        "T": count_t / length * 100,
+        "GC": (count_g + count_c) / length * 100,
+    }
+
+    return stats
+
+def print_statistics(stats):
+    print("\nSequence statistics:")
+    print(f"A: {stats['A']:.2f}%")
+    print(f"G: {stats['G']:.2f}%")
+    print(f"C: {stats['C']:.2f}%")
+    print(f"T: {stats['T']:.2f}%")
+    print(f"GC-content: {stats['GC']:.2f}%")
+
+def get_name():
+    return input("Enter your name: ").strip().lower()
+
+def insert_name_into_sequence(sequence, name):
+    if name == "":
+        return sequence
+
+    insert_position = random.randint(0, len(sequence))
+
+    modified_sequence = (sequence[:insert_position] + name + sequence[insert_position:])
+    return modified_sequence
+
 def main():
     sequence_length = get_sequence_length()
     sequence_id = get_sequence_id()
     description = get_description()
+    name = get_name()
 
+    #generate biological sequence
     dna_sequence = generate_dna_sequence(sequence_length)
-    save_to_fasta(sequence_id, description, dna_sequence)
+
+    #insert name
+    visual_sequence = insert_name_into_sequence(dna_sequence, name)
+    save_to_fasta(sequence_id, description, visual_sequence)
+
+    statistics = calculate_statistics(dna_sequence)
+    print_statistics(statistics)
 
 #    print("DNA sequence: ", dna_sequence)
 
