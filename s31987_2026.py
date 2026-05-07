@@ -37,7 +37,7 @@ def print_motif_positions(positions: list, motif: str) -> None:
 #complementary sequence
 def complementary_sequence(sequence: str) -> str:
     """
-    generates a complementary DAN sequence
+    generates a complementary DNA sequence
     """
     complementary_map = {
         "A": "T",
@@ -56,7 +56,7 @@ def complementary_sequence(sequence: str) -> str:
 
 def reverse_complementary_sequence(sequence: str) -> str:
     """
-    generates a reverse complementary DAN sequence
+    generates a reverse complementary DNA sequence
     """
     comp_sequence = complementary_sequence(sequence)
     reverse_comp_sequence = comp_sequence[::-1]
@@ -134,15 +134,15 @@ def validate_positive_int(prompt: str, min_val: int = 1, max_val: int = 100000) 
         return value
 
 
-def format_fasta(sequence_id: str,description: str, sequence: str, line_width: int=80) -> str:
+def format_fasta(seq_id: str,description: str, sequence: str, line_width: int=80) -> str:
     """
     returns a formatted fasta record as a string
     the sequence is split into lines of selected width
     """
     if description:
-        fasta_record = f">{sequence_id} {description}\n"
+        fasta_record = f">{seq_id} {description}\n"
     else:
-        fasta_record = f">{sequence_id}\n"
+        fasta_record = f">{seq_id}\n"
 
     for i in range(0, len(sequence), line_width):
         fasta_record += sequence[i:i+line_width] + "\n"
@@ -151,7 +151,7 @@ def format_fasta(sequence_id: str,description: str, sequence: str, line_width: i
 
 def save_to_fasta(sequence_id: str, fasta_record: str) -> None:
     """
-    saves a fasta record to a file named after teh sequence ID
+    saves a fasta record to a file named after the sequence ID
     """
     filename = f"{sequence_id}.fasta"
 
