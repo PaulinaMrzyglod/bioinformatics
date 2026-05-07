@@ -1,6 +1,6 @@
-#s31987
-#07.05.2026
-#Program do przetwarzania sekwencji biologicznych w formacie FASTA
+#Numer albumu: s31987
+#Data: 07.05.2026
+#Opis: Program do przetwarzania sekwencji biologicznych w formacie FASTA
 
 import random
 
