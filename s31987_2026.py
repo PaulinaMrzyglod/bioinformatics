@@ -4,16 +4,41 @@
 
 import random
 
+#function to find motif
+def find_motif(sequence: str, motif: str) -> list:
+    positions = []
+
+    if motif == "":
+        return positions
+
+    motif = motif.upper()
+
+    for i in range(0, len(sequence) - len(motif) + 1):
+        if sequence[i:i + len(motif)] == motif:
+            positions.append(i + 1)
+
+    return positions
+
+#function to display motif
+def print_motif_positions(positions: list, motif: str) -> None:
+    if motif == "":
+        print("Motif is empty")
+    elif positions:
+        print(f"Motif {motif} was found at positions {positions}")
+    else:
+        print(f"Motif {motif} was not found")
+
+
 def validate_positive_int(prompt: str, min_val: int = 1, max_val: int = 100000) -> int:
     while True:
         user_input = input(prompt)
 
-        if not user_input.isdigit():
+        try:
+            value = int(user_input)
+        except ValueError:
             print("Invalid input")
             print("Input should be a number")
             continue
-
-        value = int(user_input)
 
         if value < min_val or value > max_val:
             print("Invalid input")
@@ -80,6 +105,8 @@ def get_sequence_length():
 
         return length
 """
+
+
 def generate_sequence(length: int) -> str:
     nucleotides = ['A', 'G', 'C', 'T']
     sequence = ''
@@ -146,7 +173,10 @@ def main():
     statistics = calculate_statistics(dna_sequence)
     print_statistics(statistics)
 
-#    print("DNA sequence: ", dna_sequence)
+    #finding motif
+    motif = input("Enter the motif sequence: ").strip().upper()
+    motif_positions = find_motif(dna_sequence, motif)
+    print_motif_positions(motif_positions, motif)
 
 if __name__ == "__main__":
     main()
