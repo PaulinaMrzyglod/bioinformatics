@@ -4,28 +4,45 @@
 
 import random
 
-def format_fasta_sequence(sequence, line_length=80):
-    formatted_sequence = ""
+def validate_positive_int(prompt: str, min_val: int = 1, max_val: int = 100000) -> int:
+    while True:
+        user_input = input(prompt)
+
+        if not user_input.isdigit():
+            print("Invalid input")
+            print("Input should be a number")
+            continue
+
+        value = int(user_input)
+
+        if value < min_val or value > max_val:
+            print("Invalid input")
+            print(f"Input should be a number between {min_val} and {max_val}")
+            continue
+
+        return value
+
+
+def format_fasta(sequence_id: str,description: str, sequence: str, line_length: int=80) -> str:
+    if description:
+        fasta_record = f">{sequence_id} {description}\n"
+    else:
+        fasta_record = f">{sequence_id}\n"
 
     for i in range(0, len(sequence), line_length):
-        formatted_sequence += sequence[i:i+line_length] + "\n"
+        fasta_record += sequence[i:i+line_length] + "\n"
 
-    return formatted_sequence
+    return fasta_record
 
-def save_to_fasta(sequence_id, description, sequence):
+def save_to_fasta(sequence_id: str, fasta_record: str) -> None:
     filename = f"{sequence_id}.fasta"
 
     with open(filename, "w") as fasta_file:
-        if description:
-            fasta_file.write(f">{sequence_id} {description}\n")
-        else:
-            fasta_file.write(f">{sequence_id}\n")
-
-        fasta_file.write(format_fasta_sequence(sequence))
+        fasta_file.write(fasta_record)
 
     print(f"Wrote to {filename}")
 
-def get_sequence_id():
+def get_sequence_id() -> str:
     while True:
         sequence_id = input("Enter the sequence id: ")
 
@@ -41,9 +58,10 @@ def get_sequence_id():
 
         return sequence_id
 
-def get_description():
+def get_description() -> str:
     return input("Enter the description(optional): ")
 
+"""
 def get_sequence_length():
     while True:
         user_input = input("Enter a sequence length (between 1 and 100 000): ")
@@ -61,8 +79,8 @@ def get_sequence_length():
             continue
 
         return length
-
-def generate_dna_sequence(length):
+"""
+def generate_sequence(length: int) -> str:
     nucleotides = ['A', 'G', 'C', 'T']
     sequence = ''
 
@@ -71,7 +89,7 @@ def generate_dna_sequence(length):
 
     return sequence
 
-def calculate_statistics(sequence):
+def calculate_statistics(sequence: str) -> dict:
     length = len(sequence)
 
     count_a = sequence.count('A')
@@ -89,7 +107,7 @@ def calculate_statistics(sequence):
 
     return stats
 
-def print_statistics(stats):
+def print_statistics(stats: dict) -> None:
     print("\nSequence statistics:")
     print(f"A: {stats['A']:.2f}%")
     print(f"G: {stats['G']:.2f}%")
@@ -100,7 +118,7 @@ def print_statistics(stats):
 def get_name():
     return input("Enter your name: ").strip().lower()
 
-def insert_name_into_sequence(sequence, name):
+def insert_name(sequence: str, name: str) -> str:
     if name == "":
         return sequence
 
@@ -110,18 +128,21 @@ def insert_name_into_sequence(sequence, name):
     return modified_sequence
 
 def main():
-    sequence_length = get_sequence_length()
+    sequence_length = validate_positive_int("Enter a sequence length(between 1 and 100 000): ")
     sequence_id = get_sequence_id()
     description = get_description()
     name = get_name()
 
     #generate biological sequence
-    dna_sequence = generate_dna_sequence(sequence_length)
+    dna_sequence = generate_sequence(sequence_length)
 
     #insert name
-    visual_sequence = insert_name_into_sequence(dna_sequence, name)
-    save_to_fasta(sequence_id, description, visual_sequence)
+    visual_sequence = insert_name(dna_sequence, name)
 
+    fasta_record = format_fasta(sequence_id, description, visual_sequence)
+    save_to_fasta(sequence_id, fasta_record)
+
+    #Calculate statistics only for biological sequence
     statistics = calculate_statistics(dna_sequence)
     print_statistics(statistics)
 
